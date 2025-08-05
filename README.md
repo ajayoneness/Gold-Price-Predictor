@@ -2,7 +2,7 @@
 
 A sophisticated machine learning web application that predicts gold prices using Ridge Regression with 99.99% accuracy. The system analyzes historical data, currency correlations, and market trends to provide reliable gold price forecasts.
 
-![Gold Price Predictor](static/img/preview.png)
+
 
 ## 🌟 Features
 
@@ -47,8 +47,8 @@ A sophisticated machine learning web application that predicts gold prices using
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/GoldPrice-Predictions.git
-cd GoldPrice-Predictions
+git clone https://github.com/ajayoneness/Gold-Price-Predictor.git
+cd Gold-Price-Predictor
 ```
 
 2. Create a virtual environment:
@@ -198,7 +198,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For support and queries:
 - Create an issue in the repository
-- Contact: your.email@example.com
+- Contact: contact@codeaj.com
 
 ## 🔮 Future Enhancements
 
