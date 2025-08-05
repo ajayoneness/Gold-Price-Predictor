@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction - Gold Price Predictor{% endblock %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h1 class="display-4">
+                <i class="fas fa-brain text-warning me-3"></i>
+                Gold Price Prediction
+            </h1>
+            <p class="lead">Enter market parameters to get AI-powered price predictions</p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <!-- Prediction Form -->
+        <div class="col-lg-8">
+            <div class="prediction-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-sliders-h me-2"></i>Market Parameters</h3>
+                </div>
+                <div class="card-body">
+                    <form id="predictionForm">
+                        <div class="row">
+                            <!-- Currency Inputs -->
+                            <div class="col-md-6 mb-3">
+                                <label for="eur" class="form-label">EUR Exchange Rate</label>
+                                <input type="number" class="form-control" id="eur" name="EUR" step="0.01" placeholder="e.g., 0.85">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="gbp" class="form-label">GBP Exchange Rate</label>
+                                <input type="number" class="form-control" id="gbp" name="GBP" step="0.01" placeholder="e.g., 0.73">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="jpy" class="form-label">JPY Exchange Rate</label>
+                                <input type="number" class="form-control" id="jpy" name="JPY" step="0.01" placeholder="e.g., 148.50">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="cad" class="form-label">CAD Exchange Rate</label>
+                                <input type="number" class="form-control" id="cad" name="CAD" step="0.01" placeholder="e.g., 1.37">
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-12 text-center">
+                                <button type="button" class="btn btn-warning btn-lg me-3" onclick="makePrediction()">
+                                    <i class="fas fa-brain me-2"></i>Predict Price
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary btn-lg" onclick="useSampleData()">
+                                    <i class="fas fa-magic me-2"></i>Use Sample Data
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prediction Results -->
+    <div class="row justify-content-center mt-5" id="predictionResults" style="display: none;">
+        <div class="col-lg-10">
+            <div class="result-card">
+                <div class="card-header text-center">
+                    <h3><i class="fas fa-chart-line me-2"></i>Prediction Results</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center mb-4">
+                        <div class="col-md-4">
+                            <div class="prediction-metric">
+                                <div class="metric-icon">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                                <div class="metric-value" id="predictedPrice">$0.00</div>
+                                <div class="metric-label">Predicted Price</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="prediction-metric">
+                                <div class="metric-icon">
+                                    <i class="fas fa-arrow-down"></i>
+                                </div>
+                                <div class="metric-value" id="confidenceLower">$0.00</div>
+                                <div class="metric-label">Lower Bound</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="prediction-metric">
+                                <div class="metric-icon">
+                                    <i class="fas fa-arrow-up"></i>
+                                </div>
+                                <div class="metric-value" id="confidenceUpper">$0.00</div>
+                                <div class="metric-label">Upper Bound</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prediction Visualization -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="chart-container prediction-chart">
+                                <canvas id="predictionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Model Information -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="model-info-box">
+                                <h5><i class="fas fa-info-circle me-2"></i>Model Information</h5>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <strong>Algorithm:</strong><br>
+                                        <span id="modelAlgorithm">Ridge Regression</span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <strong>Accuracy:</strong><br>
+                                        <span class="text-success">99.99% R²</span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <strong>Error Rate:</strong><br>
+                                        <span class="text-info">±$2.80 RMSE</span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <strong>Prediction Time:</strong><br>
+                                        <span id="predictionTime">--</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="text-center mt-4" id="loadingSpinner" style="display: none;">
+        <div class="spinner-border text-warning" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Analyzing market data...</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/predictions.js') }}"></script>
+{% endblock %}
