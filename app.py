@@ -10,15 +10,21 @@ from datetime import datetime, timedelta
 import os
 from werkzeug.utils import secure_filename
 
+
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'
 app.config['UPLOAD_FOLDER'] = 'data'
+
+
 
 # Global variables to store model and data
 model = None
 scaler = None
 feature_names = None
 df_data = None
+
+
 
 def load_model_components():
     """Load the trained model, scaler, and feature names"""
@@ -50,7 +56,7 @@ def load_data():
         for col in df_data.columns[1:]:
             df_data[col] = pd.to_numeric(df_data[col].astype(str).str.replace(',', ''), errors='coerce')
         
-        df_data = df_data.fillna(method='ffill').fillna(method='bfill')
+        df_data = df_data.ffill().bfill()
         print("Data loaded successfully!")
         return True
     except Exception as e:
@@ -138,6 +144,18 @@ def about():
 def visualization():
     """Visualization page with interactive charts"""
     return render_template('visualization.html')
+
+
+
+
+
+
+
+
+
+
+
+
 
 @app.route('/prediction')
 def prediction():
@@ -290,10 +308,85 @@ def correlation_data():
         print(f"Correlation data error: {e}")
         return jsonify({'error': 'An error occurred while calculating correlations. Please refresh the page.'}), 500
 
+
+
+
+
+
+# Add at top with imports:
+from utils.predictor import GoldStockPredictor
+
+# Initialize after app creation:
+predictor = GoldStockPredictor()
+
+
+
+
+@app.route('/prediction-stock', methods=['GET', 'POST'])
+def prediction_stock():
+    """Prediction page"""
+    print("=" * 50)
+    print(f"REQUEST METHOD: {request.method}")
+    print(f"FORM DATA: {dict(request.form)}")
+    print(f"REQUEST ARGS: {dict(request.args)}")
+    print("=" * 50)
+    
+    print("Available features:", predictor.feature_names)
+    
+    if request.method == 'POST':
+        print("✓ POST request detected!")
+        print("Form data:", dict(request.form))
+        
+        try:
+            # Get form data
+            data = {
+                'Open': float(request.form.get('open')),
+                'High': float(request.form.get('high')),
+                'Low': float(request.form.get('low')),
+                'Volume': float(request.form.get('volume')),
+                'Date': request.form.get('date')
+            }
+            print("Parsed data:", data)
+            
+            # Make prediction
+            result = predictor.predict(data)
+            
+            return render_template('stock_prediction.html', 
+                                 prediction_result=result,
+                                 show_result=True)
+        except Exception as e:
+            print(f"ERROR: {e}")
+            return render_template('stock_prediction.html', 
+                                 error=str(e),
+                                 show_result=False)
+    
+    print("✗ GET request - showing form")
+    return render_template('stock_prediction.html', show_result=False)
+
+    
+
+@app.route('/api/predict-stock', methods=['POST'])
+def api_predict_stock():
+    """API endpoint for predictions"""
+    try:
+        data = request.get_json()
+        result = predictor.predict(data)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+
+
+
+
+
+
+
+
 if __name__ == '__main__':
     # Initialize the application components
     with app.app_context():
         initialize_app()
     
     # Run the Flask application
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=8080)

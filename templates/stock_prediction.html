@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gold Stock Price Prediction - AI Powered</title>
+    
+    <!-- Bootstrap 5.3.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --dark-bg: #0a0a0a;
+            --dark-secondary: #1a1a1a;
+            --dark-card: #121212;
+            --gold-primary: #FFD700;
+            --gold-dark: #B8860B;
+            --gold-light: #FFECB3;
+            --gold-accent: #FFA500;
+            --text-light: #f5f5f5;
+            --text-muted: #a0a0a0;
+            --shadow-gold: rgba(255, 215, 0, 0.3);
+        }
+
+        body {
+            background: linear-gradient(135deg, #000000 0%, #1a1200 50%, #0a0a0a 100%);
+            background-attachment: fixed;
+            color: var(--text-light);
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 215, 0, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 165, 0, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(26, 18, 0, 0.95) 50%, rgba(0, 0, 0, 0.95) 100%);
+            border-bottom: 4px solid var(--gold-primary);
+            padding: 60px 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.15), transparent);
+            animation: shimmer 4s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+
+        .page-header h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+
+        .page-header .lead {
+            color: var(--gold-light);
+            font-size: 1.3rem;
+            font-weight: 300;
+        }
+
+        .page-header i {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Main Content Area */
+        .content-section {
+            padding: 60px 0;
+            min-height: calc(100vh - 250px);
+        }
+
+        /* Card Styling */
+        .custom-card {
+            background: linear-gradient(145deg, rgba(18, 18, 18, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%);
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.7);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .custom-card:hover {
+            border-color: var(--gold-primary);
+            box-shadow: 0 20px 60px var(--shadow-gold);
+            transform: translateY(-10px);
+        }
+
+        .card-header-custom {
+            background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-accent) 100%);
+            padding: 25px 30px;
+            border-bottom: 3px solid var(--gold-primary);
+            position: relative;
+        }
+
+        .card-header-custom::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
+            animation: glow 2s infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .card-header-custom h4 {
+            margin: 0;
+            font-weight: 700;
+            color: #000;
+            font-size: 1.4rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-body-custom {
+            padding: 35px;
+        }
+
+        /* Form Styling */
+        .form-label {
+            color: var(--gold-light);
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-label i {
+            color: var(--gold-primary);
+            margin-right: 10px;
+            font-size: 1.1rem;
+            filter: drop-shadow(0 0 5px var(--gold-primary));
+        }
+
+        .form-control {
+            background: rgba(10, 10, 10, 0.9);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            color: var(--text-light);
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-control:focus {
+            background: rgba(0, 0, 0, 1);
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 20px var(--shadow-gold), inset 0 0 10px rgba(255, 215, 0, 0.1);
+            color: var(--text-light);
+            transform: translateY(-2px);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Submit Button */
+        .btn-submit {
+            background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-accent) 50%, var(--gold-primary) 100%);
+            border: none;
+            color: #000;
+            font-weight: 700;
+            font-size: 1.2rem;
+            padding: 16px 30px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-submit::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-submit:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .btn-submit:hover {
+            transform: scale(1.05) translateY(-3px);
+            box-shadow: 0 10px 35px rgba(255, 215, 0, 0.6);
+        }
+
+        .btn-submit i {
+            margin-right: 10px;
+        }
+
+        /* Result Card */
+        .result-card {
+            background: linear-gradient(145deg, rgba(18, 18, 18, 0.98) 0%, rgba(26, 26, 26, 0.98) 100%);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.7);
+            height: 100%;
+        }
+
+        .predicted-price {
+            font-size: 4.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
+            margin: 20px 0;
+            animation: priceGlow 2s infinite;
+        }
+
+        @keyframes priceGlow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5)); }
+            50% { filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.8)); }
+        }
+
+        .price-label {
+            color: var(--gold-light);
+            font-size: 1.1rem;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Metric Cards */
+        .metric-box {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.08) 0%, rgba(255, 165, 0, 0.08) 100%);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .metric-box:hover {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.15) 100%);
+            border-color: var(--gold-primary);
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px var(--shadow-gold);
+        }
+
+        .metric-box h3 {
+            color: var(--gold-primary);
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        .metric-box small {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Info Alert */
+        .info-box {
+            background: linear-gradient(135deg, rgba(10, 26, 45, 0.8) 0%, rgba(26, 18, 0, 0.8) 100%);
+            border: 2px solid var(--gold-accent);
+            border-radius: 12px;
+            padding: 20px;
+            color: var(--gold-light);
+            margin: 30px 0;
+        }
+
+        .info-box i {
+            color: var(--gold-primary);
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background: rgba(10, 10, 10, 0.6);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            margin-top: 30px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            background: linear-gradient(145deg, rgba(26, 26, 26, 0.5) 0%, rgba(42, 42, 42, 0.5) 100%);
+            border: 3px dashed rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 80px 40px;
+            text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .empty-state i {
+            font-size: 6rem;
+            color: var(--gold-dark);
+            opacity: 0.4;
+            margin-bottom: 30px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .empty-state h4 {
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .empty-state p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* Alert */
+        .alert-danger {
+            background: linear-gradient(135deg, rgba(45, 13, 13, 0.9) 0%, rgba(26, 0, 0, 0.9) 100%);
+            border: 2px solid #ff4444;
+            color: #ffcccc;
+            border-radius: 12px;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-accent) 100%);
+            border-radius: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gold-primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .predicted-price {
+                font-size: 3rem;
+            }
+            
+            .content-section {
+                padding: 30px 0;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 215, 0, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--gold-primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
+                <i class="fas fa-coins text-warning me-2"></i>
+                <span class="fw-bold">GoldPredictor</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('visualization') }}">
+                            <i class="fas fa-chart-line me-1"></i>Visualizations
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('prediction_stock') }}">
+                            <i class="fas fa-chart-line"></i> Stock Prediction
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('prediction') }}">
+                            <i class="fas fa-brain me-1"></i>Predict
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('about') }}">
+                            <i class="fas fa-info-circle me-1"></i>About
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('model_info') }}">
+                            <i class="fas fa-cogs me-1"></i>Model Info
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <br><br>
+
+
+
+
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <div class="text-center">
+                <h1 class="animate__animated animate__fadeInDown">
+                    <i class="fas fa-chart-line"></i> Gold Stock Price Prediction
+                </h1>
+                <p class="lead animate__animated animate__fadeInUp">
+                    Enter gold stock data to get AI-powered price predictions with high accuracy
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="content-section">
+        <div class="container">
+            <div class="row g-4">
+                
+                <!-- LEFT SIDE - INPUT FORM -->
+                <div class="col-lg-6">
+                    <div class="custom-card animate__animated animate__fadeInLeft">
+                        <div class="card-header-custom">
+                            <h4><i class="fas fa-keyboard"></i> Input Stock Data</h4>
+                        </div>
+                        <div class="card-body-custom">
+                            
+                            {% if error %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-circle"></i> {{ error }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            {% endif %}
+
+                            <form method="POST" action="/prediction-stock" id="stockPredictionForm">
+                                
+                                <div class="mb-4">
+                                    <label class="form-label">
+                                        <i class="fas fa-calendar-alt"></i> Date
+                                    </label>
+                                    <input type="date" class="form-control" name="date" required>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label">
+                                        <i class="fas fa-door-open"></i> Open Price ($)
+                                    </label>
+                                    <input type="number" step="0.01" class="form-control" 
+                                           name="open" placeholder="e.g., 2029.30" required>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <label class="form-label">
+                                            <i class="fas fa-arrow-up"></i> High Price ($)
+                                        </label>
+                                        <input type="number" step="0.01" class="form-control" 
+                                               name="high" placeholder="e.g., 2041.90" required>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label class="form-label">
+                                            <i class="fas fa-arrow-down"></i> Low Price ($)
+                                        </label>
+                                        <input type="number" step="0.01" class="form-control" 
+                                               name="low" placeholder="e.g., 2022.20" required>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label">
+                                        <i class="fas fa-chart-bar"></i> Volume
+                                    </label>
+                                    <input type="number" class="form-control" 
+                                           name="volume" placeholder="e.g., 166078" required>
+                                </div>
+
+                                <button type="submit" class="btn btn-submit w-100">
+                                    <i class="fas fa-calculator"></i> Calculate Prediction
+                                </button>
+                                
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT SIDE - PREDICTION RESULTS -->
+                <div class="col-lg-6">
+                    {% if show_result and prediction_result %}
+                    
+                    <div class="result-card animate__animated animate__fadeInRight">
+                        <div class="text-center">
+                            <i class="fas fa-check-circle" style="color: #4CAF50; font-size: 3rem; margin-bottom: 20px;"></i>
+                            <h3 style="color: var(--gold-light); font-weight: 600; margin-bottom: 10px;">
+                                Prediction Complete!
+                            </h3>
+                        </div>
+
+                        <div class="text-center my-4">
+                            <div class="price-label">Predicted Close Price</div>
+                            <div class="predicted-price">
+                                ${{ prediction_result.predicted_price }}
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-6">
+                                <div class="metric-box">
+                                    <h3>{{ prediction_result.confidence }}%</h3>
+                                    <small>Confidence Score</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="metric-box">
+                                    <h3>{{ prediction_result.model_name }}</h3>
+                                    <small>Model Used</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-box">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Prediction Date:</strong> {{ prediction_result.prediction_date }}
+                        </div>
+
+                        <div class="chart-container">
+                            <canvas id="predictionChart"></canvas>
+                        </div>
+                    </div>
+
+                    {% else %}
+                    
+                    <div class="empty-state animate__animated animate__fadeInRight">
+                        <i class="fas fa-chart-line"></i>
+                        <h4>Awaiting Your Input</h4>
+                        <p>Enter the stock data in the form to see<br>AI-powered predictions here</p>
+                    </div>
+
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Bootstrap 5.3.3 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.min.js"></script>
+
+    {% if show_result and prediction_result %}
+    <script>
+        // Create beautiful chart with dark/gold theme
+        const ctx = document.getElementById('predictionChart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Open', 'High', 'Low', 'Predicted Close'],
+                    datasets: [{
+                        label: 'Price ($)',
+                        data: [
+                            {{ prediction_result.input_features.Open }},
+                            {{ prediction_result.input_features.High }},
+                            {{ prediction_result.input_features.Low }},
+                            {{ prediction_result.predicted_price }}
+                        ],
+                        backgroundColor: [
+                            'rgba(184, 134, 11, 0.8)',
+                            'rgba(255, 215, 0, 0.8)',
+                            'rgba(255, 165, 0, 0.8)',
+                            'rgba(255, 236, 179, 0.9)'
+                        ],
+                        borderColor: [
+                            'rgba(184, 134, 11, 1)',
+                            'rgba(255, 215, 0, 1)',
+                            'rgba(255, 165, 0, 1)',
+                            'rgba(255, 236, 179, 1)'
+                        ],
+                        borderWidth: 3,
+                        borderRadius: 8,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { 
+                            display: false 
+                        },
+                        title: {
+                            display: true,
+                            text: 'Price Comparison Chart',
+                            font: { 
+                                size: 18,
+                                weight: 'bold',
+                                family: 'Poppins'
+                            },
+                            color: '#FFD700',
+                            padding: 20
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                            titleColor: '#FFD700',
+                            bodyColor: '#f5f5f5',
+                            borderColor: '#FFD700',
+                            borderWidth: 2,
+                            padding: 12,
+                            cornerRadius: 8,
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 13
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: false,
+                            ticks: {
+                                color: '#a0a0a0',
+                                font: {
+                                    size: 12,
+                                    family: 'Poppins'
+                                },
+                                callback: function(value) {
+                                    return '$' + value.toFixed(2);
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(255, 215, 0, 0.1)',
+                                borderColor: 'rgba(255, 215, 0, 0.3)',
+                                borderWidth: 2
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#a0a0a0',
+                                font: {
+                                    size: 12,
+                                    family: 'Poppins'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(255, 215, 0, 0.1)',
+                                borderColor: 'rgba(255, 215, 0, 0.3)',
+                                borderWidth: 2
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        }
+    </script>
+    {% endif %}
+
+    <script>
+        // Form validation and submission handling
+        const form = document.getElementById('stockPredictionForm');
+        const submitBtn = form.querySelector('.btn-submit');
+        
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                // Add loading state
+                submitBtn.innerHTML = '<span class="loading"></span> Processing...';
+                submitBtn.disabled = true;
+                
+                console.log('Form submitted successfully');
+                console.log('Method:', form.method);
+                console.log('Action:', form.action);
+            });
+        }
+
+        // Add smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
